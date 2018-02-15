@@ -10,8 +10,19 @@ function buscar() {
       };
       // console.log(pos.lat);
       // obtener los datos de la api del tiempo en la posición dada
-      $.getJSON('https://api.darksky.net/forecast/dee89d5e9210fc4bb4366e0d5ccc2d0a/' + pos.lat + ',' + pos.lng + '?extend=hourly&callback=?', function(forecast) {
+      $.getJSON('https://api.darksky.net/forecast/dee89d5e9210fc4bb4366e0d5ccc2d0a/' + pos.lat + ',' + pos.lng + '?extend=daily&callback=?', function(forecast) {
         console.log(forecast);
+        console.log(forecast.currently.temperature);
+        let fToCel = (forecast.currently.temperature - 32) * 5 / 9;
+        let temperature = $('<h2>').text(fToCel);
+        let container = $('.main-container');
+        let boton = $('.boton');
+        let btn = $('<button type="button" class="btn btn-default">').text('Predicciones de la semana');
+        container.append(temperature);
+        boton.append(btn);
+
+
+
       });
     }, function(error) {
       alert('Tenemos un problema en encontrar tu ubicación');
