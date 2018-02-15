@@ -1,4 +1,40 @@
+moment.locale('es');
 buscar();
+
+// Función que crea iconos.
+function skycons() {
+  var i,
+    icons = new Skycons({
+        "color" : "#00d2ff",
+        "resizeClear": true
+    }),
+    list  = [ // listing of all possible icons
+      "clear-day",
+      "clear-night",
+      "partly-cloudy-day",
+      "partly-cloudy-night",
+      "cloudy",
+      "rain",
+      "sleet",
+      "snow",
+      "wind",
+      "fog"
+    ];
+  // loop thru icon list array
+  for(i = list.length; i--;) {
+    var weatherType = list[i], // select each icon from list array
+    // icons will have the name in the array above attached to the 
+    // canvas element as a class so let's hook into them.
+      elements  = document.getElementsByClassName( weatherType );
+    // loop thru the elements now and set them up
+    for (e = elements.length; e--;) {
+      icons.set(elements[e], weatherType);
+    }
+  }
+     
+  // animate the icons
+  icons.play();
+}
 
 // buscar la posición
 function buscar() {
@@ -12,46 +48,51 @@ function buscar() {
       // obtener los datos de la api del tiempo en la posición dada
       $.getJSON('https://api.darksky.net/forecast/dee89d5e9210fc4bb4366e0d5ccc2d0a/' + pos.lat + ',' + pos.lng + '?extend=daily&callback=?&units=auto', function(forecast) {
         console.log(forecast);
-        console.log(forecast.currently.temperature);
-        let fToCel = `${forecast.currently.temperature}°`;
-        let temperature = $('<h2>').text(fToCel);
+        // console.log(forecast.currently.temperature);
+        // console.log(forecast.currently.icon);
         let container = $('.main-container');
-        let boton = $('.boton');
-        let btn = $('<button type="button" class="btn btn-default">').text('Predicciones de la semana');
-        let windSpeed = $('<p>').text(`${forecast.currently.windSpeed}  m/s`);
-        let humidity = $('<p>').text(`${forecast.currently.humidity}  %`);
-        let uvIndex = $('<p>').text(`${forecast.currently.uvIndex}`);
-        let pressure = $('<p>').text(`${forecast.currently.pressure}  hPa`);
+        let todayTitle = $('<h2 class="title">').text('Hoy')
+        // Current Day
+        let skiconsCurrent = forecast.currently.icon;
+        let temperature = $('<h2 class="temperature">').text(`${forecast.currently.temperature}°`);
+        let btnWeek = $('<button type="button" class="btn btn-style">').text('Predicciones de la semana');
+        let windSpeed = $('<div class="extras">').html(`<p><span class="left">Viento</span> <span class="right">${forecast.currently.windSpeed}  m/s</span></p>`);
+        let humidity = $('<div class="extras">').html(`<p><span class="left">Humedad</span> <span class="right">${forecast.currently.humidity}  %</span></p>`);
+        let uvIndex = $('<div class="extras">').html(`<p><span class="left">Índice UV</span> <span class="right">${forecast.currently.uvIndex}</span></p>`);
+        let pressure = $('<div class="extras">').html(`<p><span class="left">Presión</span> <span class="right">${forecast.currently.pressure}  hPa</span></p>`);
+        let iconTemperature = $('<canvas class="' + skiconsCurrent + '"></canvas>');
 
-        container.append(temperature, windSpeed, humidity, uvIndex, pressure);
-        boton.append(btn);
+        container.append(todayTitle, iconTemperature, temperature, windSpeed, humidity, uvIndex, pressure, btnWeek);
+
+        btnWeek.on('click', function(){
+          container.empty();
+          console.log(forecast.daily.data);
+          let counter = -1;
+          forecast.daily.data.forEach(function(element){
+            counter++
+            let dailyDay = $('<p class="dailyTitle">').text(`${moment().add(counter, 'd').format('DD, MMMM')}`)
+            let dailyTempMax = $('<p class="tempDaily">').text(`${element.apparentTemperatureHigh}`);
+            let dailyTempLow = $('<p class="tempDaily">').text(`${element.apparentTemperatureLow}`);
+            let dailyContainer = $('<div class="dailyContainer">');
+            let dailyIcon = '<canvas class="' + element.icon + ' icon-size"></canvas>';
+
+            console.log(element.icon);
+            dailyContainer.append(dailyIcon, dailyDay, dailyTempLow, dailyTempMax);
+            container.append(dailyContainer);
+            console.log(counter)
+            skycons();
+          })
+        })
+
+        skycons();
       });
     }, function(error) {
       alert('Tenemos un problema en encontrar tu ubicación');
     });
   }
 }
-
-var skycons = new Skycons({"color": "black"});
-  // on Android, a nasty hack is needed: {"resizeClear": true}
-
-  // you can add a canvas by it's ID...
-  skycons.add("icon1", Skycons.PARTLY_CLOUDY_DAY);
-
-  // ...or by the canvas DOM element itself.
-  skycons.add(document.getElementById("icon2"), Skycons.RAIN);
-
-  // if you're using the Forecast API, you can also supply
-  // strings: "partly-cloudy-day" or "rain".
-
-  // start animation!
-  skycons.play();
-
-  // you can also halt animation with skycons.pause()
-
-  // want to change the icon? no problem:
-  skycons.set("icon1", Skycons.PARTLY_CLOUDY_NIGHT);
-
+var today = moment().add(0, 'd').format('DD, MMMM')
+console.log(today);
 // probando con node
 /* const fetch = require('node-fetch');
 const weather = {};
