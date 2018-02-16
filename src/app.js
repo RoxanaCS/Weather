@@ -54,7 +54,7 @@ function buscar() {
         let todayTitle = $('<h2 class="title">').text('Hoy')
         // Current Day
         let skiconsCurrent = forecast.currently.icon;
-        let temperature = $('<h2 class="temperature">').text(`${forecast.currently.temperature}°`);
+        let temperature = $('<h2 class="temperature">').text(`${Math.floor(forecast.currently.temperature)}°`);
         let btnWeek = $('<button type="button" class="btn btn-style">').text('Predicciones de la semana');
         let windSpeed = $('<div class="extras">').html(`<p><span class="left">Viento</span> <span class="right">${forecast.currently.windSpeed}  m/s</span></p>`);
         let humidity = $('<div class="extras">').html(`<p><span class="left">Humedad</span> <span class="right">${forecast.currently.humidity}  %</span></p>`);
@@ -64,28 +64,48 @@ function buscar() {
 
         container.append(todayTitle, iconTemperature, temperature, windSpeed, humidity, uvIndex, pressure, btnWeek);
 
-        btnWeek.on('click', function(){
-          container.empty();
+        btnWeek.on('click', function()  {
+         btnWeekFunction();
+        });
+
+        let btnDaily = $('<button type="button" class="btn btn-style">').text('Volver');
+        btnDaily.on('click', function() {
+          btnDailyFunction();
+        });
+        function btnWeekFunction()  {
+           container.empty();
           console.log(forecast.daily.data);
           let counter = -1;
-          forecast.daily.data.forEach(function(element){
+          forecast.daily.data.forEach(function(element) {
             counter++
             let dailyDay = $('<p class="dailyTitle">').text(`${moment().add(counter, 'd').format('DD, MMMM')}`)
-            let dailyTempMax = $('<p class="tempDaily">').text(`${element.apparentTemperatureHigh}`);
-            let dailyTempLow = $('<p class="tempDaily">').text(`${element.apparentTemperatureLow}`);
+            let dailyTempMax = $('<p class="tempDaily">').html(`Min ${Math.floor(element.apparentTemperatureLow)}° - Max ${Math.floor(element.apparentTemperatureHigh)}°`);
+            // let dailyTempLow = $('<p class="tempDaily">').text(`${element.apparentTemperatureLow}`);
             let dailyContainer = $('<div class="dailyContainer">');
             let dailyIcon = '<canvas class="' + element.icon + ' icon-size"></canvas>';
 
             console.log(element.icon);
-            dailyContainer.append(dailyIcon, dailyDay, dailyTempLow, dailyTempMax);
+            dailyContainer.append(dailyIcon, dailyDay, dailyTempMax, btnDaily);
             container.append(dailyContainer);
-            console.log(counter)
-            skycons();
-          })
-        })
+            
+            btnDaily.on('click', function() {
+              btnDailyFunction();
+            });
 
+            skycons();
+          });
+        }
+        function btnDailyFunction() {
+          container.empty();
+          container.append(todayTitle, iconTemperature, temperature, windSpeed, humidity, uvIndex, pressure, btnWeek);
+          
+          btnWeek.on('click', function()  {
+            btnWeekFunction();
+          });
+        }
         skycons();
       });
+
     }, function(error) {
       alert('Tenemos un problema en encontrar tu ubicación');
     });
