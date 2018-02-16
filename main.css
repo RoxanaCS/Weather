@@ -1,1 +1,72 @@
-
+body{
+  background-image: url('http://eskipaper.com/images/great-landscape-wallpapers-1.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: cover;
+}
+.row{
+  margin: 0;
+}
+.main-container{
+  background-color: rgba(0,0,0,0.8);
+  min-height: 100vh;
+  padding: 3em 3em 0;
+  box-sizing: border-box;
+}
+.icon-size{
+  width: 10em;
+}
+.temperature{
+  color: #FFF;
+  font-weight: bolder;
+  font-size: 2.5em;
+}
+.extras{
+  color: #FFF;
+  font-size: 1.2em;
+  padding: 1em 0;
+}
+.title{
+  color: #FFF;
+  font-size: 3.5em;
+  font-weight: bolder;
+  margin-bottom: 1em;
+}
+.right{
+  float: right;
+  width: 50%;
+  text-align: right;
+}
+.left{
+  float: left;
+  width: 50%;
+  text-align: left;
+  font-weight: bolder;
+}
+.btn-style{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 0;
+  padding: 1em;
+}
+canvas{
+  width: 100%;
+}
+.dailyContainer{
+  margin: 0 0 6em;
+}
+.dailyTitle{
+  color: #FFF;
+  font-size: 1.7em;
+  font-weight: bolder;
+  box-sizing: border-box;
+}
+.tempDaily{
+  font-size: 1.2em;
+  font-weight: bolder;
+  color: #FFF;
+  display: inline-block;
+  margin: 0 2em;
+}
