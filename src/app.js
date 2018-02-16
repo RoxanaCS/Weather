@@ -1,41 +1,40 @@
 moment.locale('es');
 buscar();
-
+randomImg();
 // Función que crea iconos.
 function skycons() {
   var i,
     icons = new Skycons({
-        "color" : "#00d2ff",
-        "resizeClear": true
+      'color': '#00d2ff',
+      'resizeClear': true
     }),
-    list  = [ // listing of all possible icons
-      "clear-day",
-      "clear-night",
-      "partly-cloudy-day",
-      "partly-cloudy-night",
-      "cloudy",
-      "rain",
-      "sleet",
-      "snow",
-      "wind",
-      "fog"
+    list = [
+      // listing of all possible icons
+      'clear-day',
+      'clear-night',
+      'partly-cloudy-day',
+      'partly-cloudy-night',
+      'cloudy',
+      'rain',
+      'sleet',
+      'snow',
+      'wind',
+      'fog'
     ];
   // loop thru icon list array
-  for(i = list.length; i--;) {
+  for (i = list.length; i--;) {
     var weatherType = list[i], // select each icon from list array
-    // icons will have the name in the array above attached to the 
-    // canvas element as a class so let's hook into them.
-      elements  = document.getElementsByClassName( weatherType );
+      // icons will have the name in the array above attached to the
+      // canvas element as a class so let's hook into them.
+      elements = document.getElementsByClassName(weatherType);
     // loop thru the elements now and set them up
     for (e = elements.length; e--;) {
       icons.set(elements[e], weatherType);
     }
   }
-     
   // animate the icons
   icons.play();
 }
-
 // buscar la posición
 function buscar() {
   if (navigator.geolocation) {
@@ -51,7 +50,7 @@ function buscar() {
         // console.log(forecast.currently.temperature);
         // console.log(forecast.currently.icon);
         let container = $('.main-container');
-        let todayTitle = $('<h2 class="title">').text('Hoy')
+        let todayTitle = $('<h2 class="title">').text('Hoy');
         // Current Day
         let skiconsCurrent = forecast.currently.icon;
         let temperature = $('<h2 class="temperature">').text(`${Math.floor(forecast.currently.temperature)}°`);
@@ -64,21 +63,21 @@ function buscar() {
 
         container.append(todayTitle, iconTemperature, temperature, windSpeed, humidity, uvIndex, pressure, btnWeek);
 
-        btnWeek.on('click', function()  {
-         btnWeekFunction();
+        btnWeek.on('click', function() {
+          btnWeekFunction();
         });
 
         let btnDaily = $('<button type="button" class="btn btn-style">').text('Volver');
         btnDaily.on('click', function() {
           btnDailyFunction();
         });
-        function btnWeekFunction()  {
-           container.empty();
+        function btnWeekFunction() {
+          container.empty();
           console.log(forecast.daily.data);
           let counter = -1;
           forecast.daily.data.forEach(function(element) {
-            counter++
-            let dailyDay = $('<p class="dailyTitle">').text(`${moment().add(counter, 'd').format('DD, MMMM')}`)
+            counter++;
+            let dailyDay = $('<p class="dailyTitle">').text(`${moment().add(counter, 'd').format('DD, MMMM')}`);
             let dailyTempMax = $('<p class="tempDaily">').html(`Min ${Math.floor(element.apparentTemperatureLow)}° - Max ${Math.floor(element.apparentTemperatureHigh)}°`);
             // let dailyTempLow = $('<p class="tempDaily">').text(`${element.apparentTemperatureLow}`);
             let dailyContainer = $('<div class="dailyContainer">');
@@ -87,32 +86,45 @@ function buscar() {
             console.log(element.icon);
             dailyContainer.append(dailyIcon, dailyDay, dailyTempMax, btnDaily);
             container.append(dailyContainer);
-            
+
             btnDaily.on('click', function() {
               btnDailyFunction();
             });
-
             skycons();
           });
         }
         function btnDailyFunction() {
           container.empty();
           container.append(todayTitle, iconTemperature, temperature, windSpeed, humidity, uvIndex, pressure, btnWeek);
-          
-          btnWeek.on('click', function()  {
+          btnWeek.on('click', function() {
             btnWeekFunction();
           });
         }
         skycons();
       });
-
     }, function(error) {
       alert('Tenemos un problema en encontrar tu ubicación');
     });
   }
 }
-var today = moment().add(0, 'd').format('DD, MMMM')
+var today = moment().add(0, 'd').format('DD, MMMM');
 console.log(today);
+
+// usando la api de unsplush
+function randomImg() {
+  var appId = '73d6e01308796e820219d9d25ddce9df4ec2f78c22f54d97e9e4e77324fa7f67&w=1920&h=1080';
+  var url = 'https://api.unsplash.com/photos/random?client_id=' + appId;
+  $.ajax({
+    url: url,
+    dataType: 'json',
+    success: function(json) {
+      var src = json.urls.regular;
+      $('body').css('background-image', 'url(' + src + ')').css('background-size', 'cover');
+    }
+  });
+}
+
+
 // probando con node
 /* const fetch = require('node-fetch');
 const weather = {};
